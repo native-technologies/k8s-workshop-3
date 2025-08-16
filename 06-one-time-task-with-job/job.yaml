@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nodejs-console-log-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: nodejs-console-log
+        image: node:24-alpine
+        command: ["node", "-e", "console.log(Math.random())"]
+      restartPolicy: Never
+  backoffLimit: 4

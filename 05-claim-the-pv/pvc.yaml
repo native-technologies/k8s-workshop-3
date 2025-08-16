@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: api-server-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce # or "ReadOnlyMany", "ReadWriteMany", "ReadWriteOncePod"
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: ""
+  selector:
+    matchLabels:
+      name: api-server-pv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+        - name: api-server
+          image: docker.io/nativetechnologies/orderapp:1.1.0
+          volumeMounts:
+            - mountPath: /data
+              name: api-server-storage
+      volumes:
+        - name: api-server-storage
+          persistentVolumeClaim:
+            claimName: api-server-pvc
